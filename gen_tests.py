@@ -21,8 +21,9 @@ def main():
 
     datf = open(os.path.join(dest_dir, 'zdump.out'), 'w')
 
+    num_zones = 0
     for zone in allzones():
-        print('Collecting zdump(1) output for %s in zdump.out' % (zone,))
+        num_zones += 1
         # We don't yet support v2 format tzfile(5) files, so limit
         # the daterange we test against - zdump understands v2 format
         # files and will output historical records we can't cope with
@@ -35,6 +36,7 @@ def main():
             print(line, file=datf)
     datf.flush()
     datf.close()
+    print('Collected zdump(1) output for %d zones in zdump.out' % (num_zones,))
 
 if __name__ == '__main__':
     try:

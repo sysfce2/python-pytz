@@ -20,6 +20,7 @@ PYTHON310=python3.10
 PYTHON311=python3.11
 PYTHON312=python3.12
 PYTHON313=python3.13
+PYTHON314=python3.14
 PYTHON2=/usr/bin/python2
 PYTHON3=/usr/bin/python3
 PYTHON=${PYTHON3}
@@ -87,7 +88,8 @@ test_lazy: .stamp-tzinfo
 	    && ${PYTHON39} test_lazy.py ${TESTARGS} \
 	    && ${PYTHON310} test_lazy.py ${TESTARGS} \
 	    && ${PYTHON311} test_lazy.py ${TESTARGS} \
-	    && ${PYTHON312} test_lazy.py ${TESTARGS}
+	    && ${PYTHON312} test_lazy.py ${TESTARGS} \
+	    && ${PYTHON313} test_lazy.py ${TESTARGS}
 
 test_tzinfo: .stamp-tzinfo
 	cd build/dist/pytz/tests \
@@ -106,7 +108,8 @@ test_tzinfo: .stamp-tzinfo
 	    && ${PYTHON39} test_tzinfo.py ${TESTARGS} \
 	    && ${PYTHON310} test_tzinfo.py ${TESTARGS} \
 	    && ${PYTHON311} test_tzinfo.py ${TESTARGS} \
-	    && ${PYTHON312} test_tzinfo.py ${TESTARGS}
+	    && ${PYTHON312} test_tzinfo.py ${TESTARGS} \
+	    && ${PYTHON313} test_tzinfo.py ${TESTARGS}
 
 test_docs: .stamp-tzinfo
 	cd build/dist/pytz/tests \
@@ -151,7 +154,7 @@ upload_docs_pythonhosted: docs
 .stamp-zoneinfo:
 	${MAKE} -C ${IANA} ZFLAGS='-b fat' PACKRATDATA= TOPDIR=`pwd`/build USRDIR= USRSHAREDIR=etc install
 	# Break hard links, working around http://bugs.python.org/issue8876.
-	for d in zoneinfo zoneinfo-leaps zoneinfo-posix; do \
+	for d in zoneinfo ; do \
 	    rm -rf `pwd`/build/etc/$$d.tmp; \
 	    rsync -a `pwd`/build/etc/$$d/ `pwd`/build/etc/$$d.tmp; \
 	    rm -rf `pwd`/build/etc/$$d; \

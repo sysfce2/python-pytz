@@ -9,16 +9,17 @@ jobs:
 
     strategy:
       matrix:
-        python-version: ["3.12"]
+        python-version: ["3.13"]
 
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v6
       - name: Set up Python ${{ matrix.python-version }}
-        uses: actions/setup-python@v5
+        uses: actions/setup-python@v6
         with:
           python-version: ${{ matrix.python-version }}
       - name: Install dependencies
         run: |
+          python -V
           python -m pip install --upgrade pip wheel flake8
       - name: Build
         run: |
@@ -26,35 +27,39 @@ jobs:
       - name: Unit Tests
         run: |
           cd build/dist/pytz/tests
+          python -V
           python test_lazy.py -vv
           python test_tzinfo.py -vv
       - name: Documentation Tests
         run: |
           cd build/dist/pytz/tests
+          python -V
           python test_docs.py -vv
       - name: zdump Tests
         run: |
+          python -V
           python gen_tests.py
-          python test_zdump.py -vv
+          python test_zdump.py -q
 
   legacy:
     name: "Older Python 3 Releases"
-    runs-on: ubuntu-20.04
+    runs-on: ubuntu-24.04
 
     strategy:
       fail-fast: false
       matrix:
-        python-version: ["3.6", "3.7", "3.8", "3.9", "3.10", "3.11", "3.13"]
+        python-version: ["3.8", "3.9", "3.10", "3.11", "3.12"]
 
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v6
       - name: Set up Python ${{ matrix.python-version }}
-        uses: actions/setup-python@v5
+        uses: actions/setup-python@v6
         with:
           python-version: ${{ matrix.python-version }}
           allow-prereleases: true
       - name: Install dependencies
         run: |
+          python -V
           python -m pip install --upgrade pip wheel flake8
       - name: Build
         run: |
@@ -62,21 +67,39 @@ jobs:
       - name: Unit Tests
         run: |
           cd build/dist/pytz/tests
+          python -V
           python test_lazy.py -vv
           python test_tzinfo.py -vv
       - name: Documentation Tests
         run: |
           cd build/dist/pytz/tests
+          python -V
           python test_docs.py -vv
 
   antiquity:
     name: "Python 2.7"
-    runs-on: ubuntu-20.04
-    container:
-      image: python:2.7.18-buster
 
+#    runs-on: ubuntu-20.04
+#    container:
+#      image: python:2.7.18-buster
+#
+
+    runs-on: ubuntu-22.04
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v6
+
+      - name: Install Python 2.7
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y python2
+          python2 --version
+
+      - name: Install pip for Python 2.7
+        run: |
+          curl -sS https://bootstrap.pypa.io/pip/2.7/get-pip.py -o get-pip.py
+          sudo python2 get-pip.py
+          pip2 --version
+
       - name: Install dependencies
         run: |
           apt-get update && apt-get install sudo cmake gawk rsync -y
@@ -88,9 +111,11 @@ jobs:
       - name: Unit Tests
         run: |
           cd build/dist/pytz/tests
-          python test_lazy.py -vv
-          python test_tzinfo.py -vv
+          python2 -V
+          python2 test_lazy.py -vv
+          python2 test_tzinfo.py -vv
       - name: Documentation Tests
         run: |
           cd build/dist/pytz/tests
-          python test_docs.py -vv
+          python2 -V
+          python2 test_docs.py -vv
